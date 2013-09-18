@@ -1,0 +1,65 @@
+Installation
+
+Keyboard layout
+For many countries and keyboard types appropriate keymaps are available already, and a command like loadkeys uk might do what you want. 
+More available keymap files can be found in /usr/share/kbd/keymaps/ (you can omit the keymap path and file extension when using loadkeys).
+
+Partition disks
+cfdisk
+mkfs
+
+Mount the partitions
+We now must mount the root partition on /mnt. 
+You should also create directories for and mount any other partitions (/mnt/boot, /mnt/home, ...) 
+and mount your swap partition if you want them to be detected by genfstab.
+
+Connect to the internet
+A DHCP service is already enabled for all available devices. 
+If you need to setup a static IP or use management tools such as Netctl, you should stop this service first: 
+systemctl stop dhcpcd.service. For more information read configuring network.
+
+Wireless
+Run wifi-menu to set up your wireless network. For details, see Wireless Setup and Netctl.
+
+Install the base system
+Before installing, you may want to edit /etc/pacman.d/mirrorlist such that your preferred mirror is first. 
+This copy of the mirrorlist will be installed on your new system by pacstrap as well, so it's worth getting it right.
+Using the pacstrap script we install the base system.
+# pacstrap /mnt base
+Other packages can be installed by appending their names to the above command (space seperated), including the bootloader if you want.
+
+Install a bootloader
+GRUB
+For BIOS:
+# arch-chroot /mnt pacman -S grub-bios
+For EFI (in rare cases you will need grub-efi-i386 instead):
+# arch-chroot /mnt pacman -S grub-efi-x86_64
+Syslinux
+# arch-chroot /mnt pacman -S syslinux
+
+Configure the system
+Generate an fstab with the following command (if you prefer to use UUIDs or labels, add the -U or -L option, respectively):
+# genfstab -p /mnt >> /mnt/etc/fstab
+Next we chroot into our newly installed system:
+# arch-chroot /mnt
+Write your hostname to /etc/hostname.
+Symlink /etc/localtime to /usr/share/zoneinfo/Zone/SubZone. 
+Replace Zone and Subzone to your liking. For example:
+# ln -s /usr/share/zoneinfo/Europe/Athens /etc/localtime
+Uncomment the selected locale in /etc/locale.gen and generate it with locale-gen.
+Set locale preferences in /etc/locale.conf. #LANG="en_US.UTF-8"
+
+Add console keymap and font preferences in /etc/vconsole.conf #KEYMAP=us
+
+Configure /etc/mkinitcpio.conf as needed and create an initial RAM disk with:
+# mkinitcpio -p linux
+
+Configure the bootloader.
+# modprobe dm-mod
+# grub-install --recheck /dev/sda
+# grub-mkconfig -o /boot/grub/grub.cfg
+
+Set a root password with passwd.
+
+Unmount and reboot
+
