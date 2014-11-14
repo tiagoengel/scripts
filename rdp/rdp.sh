@@ -28,7 +28,9 @@ function create_connection() {
 function connect() {
 	. "$CONN_FILE"
 	#xfreerdp -u "$USER" -p "$PASS" -g 95% --plugin cliprdr -T "$HOST" --plugin rdpdr --data disk:temp:"$HOME" -- "$HOST"
-	xfreerdp /u:"$USER" /p:"$PASS" /size:1840x970 +clipboard +smart-sizing /drive:home,"$HOME" /t:"$HOST" /v:"$HOST"
+	#Remove para não ter problemas com portas diferentes no mesmo ip
+	rm ~/.config/freerdp/known_hosts	
+	echo Y | xfreerdp /u:"$USER" /p:"$PASS" /size:1840x970 -themes -wallpaper -encryption +clipboard +smart-sizing /drive:home,"$HOME/temp" /t:"$HOST" /v:"$HOST"
 }
 
 function create_if_not_exist() {

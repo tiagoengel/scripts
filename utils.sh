@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function findin() {
-   find ./ -name "$1" | xargs grep "$2" | awk -F: {'print $1"/"$2'} | awk -F/ {'i=NF-1; print "("$2") --> " $i'} | sort -u
+   find ./ -name "$1" | xargs grep "$2" | awk -F: '{print $1"/"$2}' | awk -F/ '{i=NF-1; print "("$2") --> " $i}' | sort -u
 }
 
 function choose_a_file() {
@@ -44,4 +44,19 @@ function getWindowID() {
 	  fi
       fi
   done
+}
+
+# A slicker error handling routine
+function error_exit() {
+
+#	----------------------------------------------------------------
+#	Function for exit due to fatal program error
+#		Accepts 1 argument:
+#			string containing descriptive error message
+#	----------------------------------------------------------------
+
+	PROGNAME=$(basename $0)
+
+	echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+	exit 1
 }

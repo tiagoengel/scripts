@@ -23,6 +23,10 @@ cd "$MODULO_XML"
 
 ant -DnomeModulo="$MODULO" deploy
 
+# Touch web.xml to force redeploy
+echo "Forcing redeploy..."
+touch /usr/local/share/systextilweb/jboss-4.2.3.GA/server/default/deploy/systextil.ear/NxjWebApp.war/WEB-INF/web.xml
+
 
 
 
